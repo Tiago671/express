@@ -5,7 +5,7 @@ const router = new Router();
 
 router.get("/customers", customersController.showAll)
 router.get("/customers/:id", customersController.showUnique)
-router.post("/customers/:name", customersController.create)
+router.post("/customers/", customersController.create)
 router.put("/customers/:id/:name", customersController.update)
 router.delete("/customers/:id", customersController.destroy)
 

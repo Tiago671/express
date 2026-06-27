@@ -7,51 +7,55 @@ class CustomersController {
 
         return res.json(customers).status(status)
     }
-    showUnique(req, res){
-        const id = parseInt(req.params.id)
-        const customer = req.body.find((item) => {
-            if(id === (item.id)){
-                return item
+    async showUnique(req, res){
+        const customerId = parseInt(req.params.id)
+        const customer = await prisma.customer.findUnique({
+            where: {
+                id: customerId
             }
-            return 
         })
-        return res.json(customer)
+        let status = customers ? 200 : 400
+        return res.json(customer).status(status)
         
     }
 
-    create(req, res){
-        const name = req.params.name
-        let finded = db.find((item, index, array) => {
-            if(!(item.id == (index+1))) return item
-            if(item.id == array.length) return item
-          }).id
-        
-        const customer = {
-            id: finded < db.length ? finded : finded+1,
-            name
-        }
-
-        db.push(customer)
-        return res.json(db)
+    async create(req, res){
+        const { name, email } = req.body
+        const customer = await prisma.customer.create({
+            data: {
+                name,
+                email
+            }
+        })
+        let status = customers ? 201 : 400
+        return res.json(customer).status(status)
     }
 
-    update(req, res){
-        const { id, name } = req.params
-        const customer = db.at(id-1)
+    async update(req, res){
+        const { id } = req.params
+        const { ...customer } = req.body
+        const customer = await prisma.customer.update({
+            where: {
+                id
+            },
+            data: {
+                ...customer
+            }
+        }) 
 
-        customer.name = name
-
-        res.send(db)
+        let status = customers ? 200 : 400
+        res.json(customer).status(status)
     }
 
-    destroy(req, res){
+    async destroy(req, res){
         const {id} = req.params
-        const customer = db.find((item) => {
-            return id == item.id
-        });
-        db.splice(customer.id -1, customer.id)
-
-        res.send(db)
+        const customer = await prisma.customer.delete({
+            where: {
+                id
+            }
+        })
+        let status = customers ? 200 : 400
+        res.json(customer).status(status)
     }
 }
 
