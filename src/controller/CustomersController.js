@@ -1,20 +1,13 @@
-let db = [{
-            id: 1,
-            name: "tiaa"
-        },
-        {
-            id: 2,
-            name: "delfd"
-        },
-    ]
-
+import { prisma } from '../../lib/prisma.ts'
 class CustomersController {
 
-    index(req, res){
-        return res.send(db)
+    async showAll(req, res){
+        const customers = await prisma.customer.findMany()
+        let status = customers ? 200 : 400
 
+        return res.json(customers).status(status)
     }
-    show(req, res){
+    showUnique(req, res){
         const id = parseInt(req.params.id)
         const customer = req.body.find((item) => {
             if(id === (item.id)){
